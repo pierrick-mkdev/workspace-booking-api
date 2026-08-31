@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkSpace.Api.Data;
+using WorkSpace.Api.DTOs;
 using WorkSpace.Api.Models;
+using WorkSpace.Api.Services;
 
 namespace WorkSpace.Api.Controllers;
 
@@ -9,67 +11,55 @@ namespace WorkSpace.Api.Controllers;
 [Route("api/[controller]")]
 public class ResourcesController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly IResourceService _resourceService;
     
-    public ResourcesController(AppDbContext context)
+    public ResourcesController(IResourceService resourceService)
     {
-        _context = context;
+        _resourceService = resourceService;
     }
 
     // GET: api/resources
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Resource>>> GetResources()
     {
-        return await _context.Resources.ToListAsync();
+        IEnumerable<ResourceDto> resources = await _resourceService.GetAllAsync();
+        return Ok(resources);
     }
 
     // GET: api/resources/1
     [HttpGet("{id:int}")]
     public async Task<ActionResult<Resource>> GetResource(int id)
     {
-        var resource = await _context.Resources.FindAsync(id);
+        ResourceDto? resource = await _resourceService.GetByIdAsync(id);
         
         if (resource == null)
         {
             return NotFound();
         }
 
-        return resource;
+        return Ok(resource);
     }
     
     // POST: api/resources
     [HttpPost]
-    public async Task<ActionResult<Resource>> CreateResource(Resource resource)
+    public async Task<ActionResult<Resource>> CreateResource(CreateResourceDto createDto)
     {
-        _context.Resources.Add(resource);
-        await _context.SaveChangesAsync();
-        
-        return CreatedAtAction(nameof(GetResource), new { id = resource.Id }, resource);
+        ResourceDto createdResource = await _resourceService.CreateAsync(createDto);
+        return CreatedAtAction(nameof(GetResource), new { id = createdResource.Id }, createdResource);
     }
     
     // PUT: api/resources/1
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateResource(int id, Resource resource)
+    public async Task<IActionResult> UpdateResource(int id, ResourceDto updateDto)
     {
-        if (id != resource.Id)
+        if (id != updateDto.Id)
         {
-            return BadRequest("L'ID de l'URL ne correspond pas à l'ID de l'objet.");
+            return BadRequest("URL ID does not match object ID");
         }
 
-        _context.Entry(resource).State = EntityState.Modified;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!ResourceExists(id))
-            {
-                return NotFound();
-            }
-            throw;
-        }
+        bool updated = await _resourceService.UpdateAsync(id, updateDto);
+        
+        if (!updated) return NotFound();
 
         return NoContent(); // Code HTTP 204
     }
@@ -78,21 +68,10 @@ public class ResourcesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteResource(int id)
     {
-        var resource = await _context.Resources.FindAsync(id);
+        bool deleted = await _resourceService.DeleteAsync(id);
         
-        if (resource == null)
-        {
-            return NotFound();
-        }
-
-        _context.Resources.Remove(resource);
-        await _context.SaveChangesAsync();
+        if (!deleted) return NotFound();
 
         return NoContent(); // Code HTTP 204
-    }
-    
-    private bool ResourceExists(int id)
-    {
-        return _context.Resources.Any(e => e.Id == id);
     }
 }

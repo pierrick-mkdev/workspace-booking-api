@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WorkSpace.Api.Data;
+using WorkSpace.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Add controllers and OpenAPI support
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddScoped<IResourceService, ResourceService>();
 
 var app = builder.Build();
 
