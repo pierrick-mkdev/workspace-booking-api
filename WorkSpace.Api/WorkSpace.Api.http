@@ -5,3 +5,30 @@ Accept: application/json
 
 GET http://localhost:5166/api/resources/1
 Accept: application/json
+
+###
+
+POST http://localhost:5166/api/resources
+Content-Type: application/json
+
+{
+  "name": "Meeting room Bravo",
+  "capacity": 20,
+  "isAvailable": true
+}
+
+###
+
+PUT http://localhost:5166/api/resources/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "Meeting room Alpha updated",
+  "capacity": 15,
+  "isAvailable": true
+}
+
+###
+
+DELETE http://localhost:5166/api/resources/1
