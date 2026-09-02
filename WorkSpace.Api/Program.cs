@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WorkSpace.Api.Data;
 using WorkSpace.Api.Services;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<IResourceService, ResourceService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 var app = builder.Build();
 

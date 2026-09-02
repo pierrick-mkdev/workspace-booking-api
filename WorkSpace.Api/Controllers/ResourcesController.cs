@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkSpace.Api.Data;
@@ -12,10 +13,14 @@ namespace WorkSpace.Api.Controllers;
 public class ResourcesController : ControllerBase
 {
     private readonly IResourceService _resourceService;
-    
-    public ResourcesController(IResourceService resourceService)
+    private readonly IValidator<CreateResourceDto> _validator;
+
+    public ResourcesController(
+        IResourceService resourceService,
+        IValidator<CreateResourceDto> validator)
     {
         _resourceService = resourceService;
+        _validator = validator;
     }
 
     // GET: api/resources
@@ -44,6 +49,13 @@ public class ResourcesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Resource>> CreateResource(CreateResourceDto createDto)
     {
+        var validationResult = await _validator.ValidateAsync(createDto);
+
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(validationResult.ToDictionary());
+        }
+        
         ResourceDto createdResource = await _resourceService.CreateAsync(createDto);
         return CreatedAtAction(nameof(GetResource), new { id = createdResource.Id }, createdResource);
     }

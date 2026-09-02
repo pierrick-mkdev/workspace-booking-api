@@ -12,23 +12,59 @@ POST http://localhost:5166/api/resources
 Content-Type: application/json
 
 {
-  "name": "Meeting room Delta",
-  "capacity": 52,
+  "name": "",
+  "capacity": 0,
   "isAvailable": true
 }
 
 ###
 
-PUT http://localhost:5166/api/resources/4
+PUT http://localhost:5166/api/resources/5
 Content-Type: application/json
 
 {
-  "id": 4,
-  "name": "Meeting room Delta updated",
-  "capacity": 43,
+  "id": 5,
+  "name": "Meeting room Alpha",
+  "capacity": 2,
   "isAvailable": true
 }
 
 ###
 
-DELETE http://localhost:5166/api/resources/3
+DELETE http://localhost:5166/api/resources/5
+
+###
+
+GET http://localhost:5166/api/reservations
+
+###
+
+POST http://localhost:5166/api/reservations
+Content-Type: application/json
+
+{
+  "resourceId": 2,
+  "userEmail": "toto@gmail.com",
+  "startTime": "2026-09-02T09:00:00Z",
+  "endTime": "2026-09-02T11:00:00Z"
+}
+
+###
+
+POST http://localhost:5166/api/reservations
+Content-Type: application/json
+
+{
+  "resourceId": 2,
+  "userEmail": "jane.smith@example.com",
+  "startTime": "2026-09-02T11:00:00Z",
+  "endTime": "2026-09-02T12:00:00Z"
+}
+
+###
+
+GET http://localhost:5166/api/reservations/resource/2
+
+###
+
+DELETE http://localhost:5166/api/reservations/1
