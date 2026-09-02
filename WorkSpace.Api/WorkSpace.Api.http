@@ -44,9 +44,9 @@ Content-Type: application/json
 
 {
   "resourceId": 2,
-  "userEmail": "toto@gmail.com",
-  "startTime": "2026-09-02T09:00:00Z",
-  "endTime": "2026-09-02T11:00:00Z"
+  "userEmail": "donald@gmail.com",
+  "startTime": "2026-09-02T08:00:00Z",
+  "endTime": "2026-09-02T09:00:00Z"
 }
 
 ###

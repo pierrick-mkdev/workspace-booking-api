@@ -61,16 +61,8 @@ public class ReservationsController  : ControllerBase
             return BadRequest(validationResult.ToDictionary());
         }
         
-        try
-        {
-            var createdReservation = await _reservationService.CreateAsync(createDto);
-            return CreatedAtAction(nameof(GetReservation), new { id = createdReservation.Id }, createdReservation);
-        }
-        catch (InvalidOperationException ex)
-        {
-            // Returns an HTTP 400 Bad Request error
-            return BadRequest(new { message = ex.Message });
-        }
+        var createdReservation = await _reservationService.CreateAsync(createDto);
+        return CreatedAtAction(nameof(GetReservation), new { id = createdReservation.Id }, createdReservation);
     }
 
     // DELETE: api/reservations/5
