@@ -1,5 +1,6 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 using WorkSpace.Api.Data;
 using WorkSpace.Api.Services;
 using WorkSpace.Api.Exceptions;
@@ -29,11 +30,8 @@ var app = builder.Build();
 
 app.UseExceptionHandler();
 
-// Enable OpenAPI endpoint in development
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+app.MapOpenApi();
+app.MapScalarApiReference();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
