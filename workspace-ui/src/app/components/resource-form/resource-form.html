@@ -1,0 +1,28 @@
+<form [formGroup]="resourceForm" (ngSubmit)="onSubmit()">
+  <h3>{{ editingId() ? 'Modify the workspace' : 'Add a workspace' }}</h3>
+
+  <div>
+    <label for="name">Name :</label>
+    <input id="name" type="text" formControlName="name" />
+  </div>
+
+  <div>
+    <label for="capacity">Capacity :</label>
+    <input id="capacity" type="number" formControlName="capacity" />
+  </div>
+
+  <div>
+    <label>
+      <input type="checkbox" formControlName="isAvailable" />
+      Available
+    </label>
+  </div>
+
+  <button type="submit" [disabled]="resourceForm.invalid">
+    {{ editingId() ? 'Update workspace' : 'Create workspace' }}
+  </button>
+
+  @if (editingId()) {
+    <button type="button" (click)="resetForm()">Cancel</button>
+  }
+</form>
