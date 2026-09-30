@@ -1,0 +1,32 @@
+<h2>Book a Workspace</h2>
+
+<form [formGroup]="reservationForm" (ngSubmit)="onSubmit()">
+  <div>
+    <label for="resourceId">Workspace:</label>
+    <select id="resourceId" formControlName="resourceId">
+      <option [ngValue]="null" disabled>-- Select a workspace --</option>
+      @for (resource of resources(); track resource.id) {
+        <option [value]="resource.id">
+          {{ resource.name }} (Capacity: {{ resource.capacity }})
+        </option>
+      }
+    </select>
+  </div>
+
+  <div>
+    <label for="userEmail">User Email :</label>
+    <input id="userEmail" type="email" formControlName="userEmail" placeholder="user@example.com" />
+  </div>
+
+  <div>
+    <label for="startTime">Start Time:</label>
+    <input id="startTime" type="datetime-local" formControlName="startTime" />
+  </div>
+
+  <div>
+    <label for="endTime">End Time:</label>
+    <input id="endTime" type="datetime-local" formControlName="endTime" />
+  </div>
+
+  <button type="submit" [disabled]="reservationForm.invalid">Reserve</button>
+</form>

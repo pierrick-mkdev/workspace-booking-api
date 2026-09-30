@@ -6,3 +6,5 @@ export interface Reservation {
   startTime: string;
   endTime: string;
 }
+
+export type CreateReservationData = Omit<Reservation, 'id' | 'resourceName'>;

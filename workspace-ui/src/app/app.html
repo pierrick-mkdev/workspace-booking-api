@@ -1,5 +1,12 @@
 <h1>Workspace Management</h1>
+
 <hr>
 <app-resource-form (resourceSaved)="onResourceSaved()"></app-resource-form>
 <hr>
 <app-resource-list (editRequested)="onEditRequested($event)"></app-resource-list>
+
+<hr>
+<h2>Reservations</h2>
+<app-reservation-form (reservationSaved)="onReservationSaved()"></app-reservation-form>
+<hr>
+<app-reservation-list></app-reservation-list>

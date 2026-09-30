@@ -1,0 +1,19 @@
+<h2>Existing Reservations</h2>
+
+@if (reservations().length === 0) {
+  <p>No reservations found.</p>
+} @else {
+  <ul>
+    @for (reservation of reservations(); track reservation.id) {
+      <li>
+        <strong>{{ reservation.resourceName }}</strong> — Reserved by: {{ reservation.userEmail }}
+        <br />
+        <span>
+          From: {{ reservation.startTime | date:'short' }}
+          To: {{ reservation.endTime | date:'short' }}
+        </span>
+        <button (click)="onCancel(reservation.id)">Cancel</button>
+      </li>
+    }
+  </ul>
+}
