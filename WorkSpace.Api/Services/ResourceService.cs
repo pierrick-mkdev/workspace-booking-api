@@ -21,8 +21,7 @@ public class ResourceService : IResourceService
             {
                 Id = r.Id,
                 Name = r.Name,
-                Capacity = r.Capacity,
-                IsAvailable = r.IsAvailable
+                Capacity = r.Capacity
             })
             .ToListAsync();
     }
@@ -37,8 +36,7 @@ public class ResourceService : IResourceService
         {
             Id = resource.Id,
             Name = resource.Name,
-            Capacity = resource.Capacity,
-            IsAvailable = resource.IsAvailable
+            Capacity = resource.Capacity
         };
     }
 
@@ -47,8 +45,7 @@ public class ResourceService : IResourceService
         var resource = new Resource
         {
             Name = createDto.Name,
-            Capacity = createDto.Capacity,
-            IsAvailable = createDto.IsAvailable
+            Capacity = createDto.Capacity
         };
 
         _context.Resources.Add(resource);
@@ -58,8 +55,7 @@ public class ResourceService : IResourceService
         {
             Id = resource.Id,
             Name = resource.Name,
-            Capacity = resource.Capacity,
-            IsAvailable = resource.IsAvailable
+            Capacity = resource.Capacity
         };
     }
 
@@ -71,7 +67,6 @@ public class ResourceService : IResourceService
 
         resource.Name = updateDto.Name;
         resource.Capacity = updateDto.Capacity;
-        resource.IsAvailable = updateDto.IsAvailable;
 
         await _context.SaveChangesAsync();
         return true;

@@ -25,22 +25,20 @@ export class ResourceFormComponent {
   // Form configuration with its validation rules
   resourceForm = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
-    capacity: [1, [Validators.required, Validators.min(1)]],
-    isAvailable: [true]
+    capacity: [1, [Validators.required, Validators.min(1)]]
   });
 
   setFormForEdit(resource: Resource): void {
     this.editingId.set(resource.id);
     this.resourceForm.patchValue({
       name: resource.name,
-      capacity: resource.capacity,
-      isAvailable: resource.isAvailable
+      capacity: resource.capacity
     });
   }
 
   resetForm(): void {
     this.editingId.set(null);
-    this.resourceForm.reset({ capacity: 1, isAvailable: true });
+    this.resourceForm.reset({ capacity: 1 });
   }
 
   onSubmit(): void {

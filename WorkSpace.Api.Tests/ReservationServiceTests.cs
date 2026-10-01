@@ -23,7 +23,7 @@ public class ReservationServiceTests
         // Arrange
         using var context = GetInMemoryDbContext();
         
-        var resource = new Resource { Id = 1, Name = "Meeting Room A", Capacity = 10, IsAvailable = true };
+        var resource = new Resource { Id = 1, Name = "Meeting Room A", Capacity = 10 };
         context.Resources.Add(resource);
         await context.SaveChangesAsync();
 
@@ -52,7 +52,7 @@ public class ReservationServiceTests
         // Arrange
         using var context = GetInMemoryDbContext();
 
-        var resource = new Resource { Id = 1, Name = "Meeting Room A", Capacity = 10, IsAvailable = true };
+        var resource = new Resource { Id = 1, Name = "Meeting Room A", Capacity = 10 };
         context.Resources.Add(resource);
 
         // Existing reservation : 10h00 -> 12h00

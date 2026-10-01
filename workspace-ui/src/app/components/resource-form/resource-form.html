@@ -11,13 +11,6 @@
     <input id="capacity" type="number" formControlName="capacity" />
   </div>
 
-  <div>
-    <label>
-      <input type="checkbox" formControlName="isAvailable" />
-      Available
-    </label>
-  </div>
-
   <button type="submit" [disabled]="resourceForm.invalid">
     {{ editingId() ? 'Update workspace' : 'Create workspace' }}
   </button>

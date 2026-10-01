@@ -71,7 +71,7 @@ public class ReservationService : IReservationService
         // Check if the resource exist and is available
         var resource = await _context.Resources.FindAsync(createDto.ResourceId);
         
-        if (resource == null || !resource.IsAvailable)
+        if (resource == null)
         {
             throw new InvalidOperationException("The requested resource does not exist or is not available.");
         }

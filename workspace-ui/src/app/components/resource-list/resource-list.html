@@ -9,12 +9,7 @@
     <ul>
       @for (resource of resources(); track resource.id) {
         <li>
-          <strong>{{ resource.name }}</strong> — Capacity : {{ resource.capacity }} people
-          @if (resource.isAvailable) {
-            <span style="color: green;"> (Available)</span>
-          } @else {
-            <span style="color: red;"> (Occupied)</span>
-          }
+          <strong>{{ resource.name }}</strong> — Capacity : {{ resource.capacity }} {{ resource.capacity > 1 ? 'seats' : 'seat' }}
           <button (click)="onEdit(resource)">Edit</button>
           <button (click)="onDelete(resource.id)">Delete</button>
         </li>
