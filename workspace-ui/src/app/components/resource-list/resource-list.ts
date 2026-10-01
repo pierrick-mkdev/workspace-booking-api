@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { finalize } from 'rxjs';
 import { ResourceService } from '../../services/resource';
 import { Resource } from '../../models/resource';
 
@@ -25,17 +26,11 @@ export class ResourceListComponent implements OnInit {
 
   loadResources(): void {
     this.loading.set(true);
-    this.resourceService.getResources().subscribe({
-      next: (data) => {
-        console.log('Data received:', data);
-        this.resources.set(data)
-        this.loading.set(false);
-      },
-      error: (err) => {
-        console.error('API error:', err);
-        this.loading.set(false);
-      }
-    });
+    this.resourceService.getResources()
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (data) => this.resources.set(data)
+      });
   }
 
   onEdit(resource: Resource): void {
@@ -48,8 +43,7 @@ export class ResourceListComponent implements OnInit {
         next: () => {
           // Refresh the resource list after deletion
           this.loadResources();
-        },
-        error: (err) => console.error('Error during deletion :', err)
+        }
       });
     }
   }

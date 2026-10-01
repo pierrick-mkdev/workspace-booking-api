@@ -35,8 +35,7 @@ export class ReservationFormComponent implements OnInit {
 
   loadResources(): void {
     this.resourceService.getResources().subscribe({
-      next: (data) => this.resources.set(data),
-      error: (err) => console.error('Error loading resources', err)
+      next: (data) => this.resources.set(data)
     });
   }
 
@@ -54,9 +53,6 @@ export class ReservationFormComponent implements OnInit {
       next: () => {
         this.reservationForm.reset();
         this.reservationSaved.emit();
-      },
-      error: (err) => {
-        console.error('Error creating reservation', err);
       }
     });
   }

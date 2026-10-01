@@ -59,8 +59,7 @@ export class ResourceFormComponent {
       next: () => {
         this.resetForm();
         this.resourceSaved.emit(); // Success notification
-      },
-      error: (err) => console.error('Creation error:', err)
+      }
     });
   }
 
@@ -69,8 +68,7 @@ export class ResourceFormComponent {
       next: () => {
         this.resetForm();
         this.resourceSaved.emit();
-      },
-      error: (err) => console.error('Edit error :', err)
+      }
     });
   }
 }

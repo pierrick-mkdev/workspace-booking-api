@@ -21,16 +21,14 @@ export class ReservationListComponent implements OnInit {
 
   loadReservations(): void {
     this.reservationService.getReservations().subscribe({
-      next: (data) => this.reservations.set(data),
-      error: (err) => console.error('Error loading reservations', err)
+      next: (data) => this.reservations.set(data)
     });
   }
 
   onCancel(id: number): void {
     if (confirm('Are you sure you want to cancel this reservation?')) {
       this.reservationService.cancelReservation(id).subscribe({
-        next: () => this.loadReservations(),
-        error: (err) => console.error('Error cancelling reservation', err)
+        next: () => this.loadReservations()
       });
     }
   }
