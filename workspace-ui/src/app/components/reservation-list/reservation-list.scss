@@ -1,0 +1,125 @@
+.list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  margin-top: 10px;
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  padding: 32px;
+}
+
+.empty-card {
+  text-align: center;
+  padding: 24px;
+  background-color: #fafafa;
+
+  .empty-icon {
+    font-size: 48px;
+    height: 48px;
+    width: 48px;
+    color: #9e9e9e;
+    margin-bottom: 8px;
+  }
+
+  p {
+    margin: 0;
+    color: #616161;
+  }
+}
+
+.table-responsive {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.full-width-table {
+  width: 100%;
+}
+
+.cell-icon {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+  vertical-align: middle;
+  margin-right: 6px;
+  color: #666;
+}
+
+.workspace-name {
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+}
+
+.user-email {
+  display: inline-flex;
+  align-items: center;
+  color: #424242;
+}
+
+.text-end {
+  text-align: right;
+}
+
+.desktop-table {
+  width: 100%;
+}
+
+.mobile-cards {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .desktop-table {
+    display: none !important;
+  }
+
+  .mobile-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 8px 0;
+  }
+
+  .reservation-card {
+    border-radius: 8px;
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    p {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 6px 0;
+      color: #555;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+}

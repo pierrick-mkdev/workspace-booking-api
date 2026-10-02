@@ -1,19 +1,54 @@
-<h2>List of workspaces</h2>
+<div class="list-container">
+  <div class="list-header">
+    <div class="actions">
+      <button mat-flat-button color="primary" (click)="openResourceModal()">
+        <mat-icon>add</mat-icon>
+        Add Workspace
+      </button>
+      <button mat-icon-button (click)="loadResources()" matTooltip="Refresh">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </div>
 
-@if (loading()) {
-  <p>Loading workspaces...</p>
-} @else {
-  @if (resources().length === 0) {
-    <p>No workspace available at the moment.</p>
+  @if (loading()) {
+    <div class="spinner-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  } @else if (resources().length === 0) {
+    <mat-card class="empty-card">
+      <mat-card-content>
+        <mat-icon class="empty-icon">meeting_room</mat-icon>
+        <p>No workspaces found. Create your first workspace using the form!</p>
+      </mat-card-content>
+    </mat-card>
   } @else {
-    <ul>
+    <div class="cards-grid">
       @for (resource of resources(); track resource.id) {
-        <li>
-          <strong>{{ resource.name }}</strong> — Capacity : {{ resource.capacity }} {{ resource.capacity > 1 ? 'seats' : 'seat' }}
-          <button (click)="onEdit(resource)">Edit</button>
-          <button (click)="onDelete(resource.id)">Delete</button>
-        </li>
+        <mat-card class="resource-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar class="card-avatar">business</mat-icon>
+            <mat-card-title>{{ resource.name }}</mat-card-title>
+            <mat-card-subtitle>
+              <span class="capacity-badge">
+                <mat-icon class="badge-icon">groups</mat-icon>
+                {{ resource.capacity | i18nPlural: seatMapping }}
+              </span>
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-actions align="end">
+            <button mat-button color="primary" (click)="openResourceModal(resource)">
+              <mat-icon>edit</mat-icon>
+              Edit
+            </button>
+            <button mat-button color="warn" (click)="onDelete(resource.id)">
+              <mat-icon>delete</mat-icon>
+              Delete
+            </button>
+          </mat-card-actions>
+        </mat-card>
       }
-    </ul>
+    </div>
   }
-}
+</div>

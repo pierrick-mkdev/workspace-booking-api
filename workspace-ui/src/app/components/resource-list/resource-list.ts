@@ -1,24 +1,39 @@
-import { Component, OnInit, inject, signal, output } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { finalize } from 'rxjs';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ResourceService } from '../../services/resource';
 import { Resource } from '../../models/resource';
+import { DialogService } from '../../services/dialog';
+import { ResourceFormComponent } from '../resource-form/resource-form';
 
 @Component({
   selector: 'app-resource-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule
+  ],
   templateUrl: './resource-list.html',
   styleUrl: './resource-list.scss'
 })
 
 export class ResourceListComponent implements OnInit {
   private resourceService = inject(ResourceService);
+  private dialogService = inject(DialogService);
 
   resources = signal<Resource[]>([]);
   loading = signal<boolean>(true);
-
-  editRequested = output<Resource>();
+  readonly seatMapping: { [k: string]: string } = {
+    '=1': '1 seat',
+    'other': '# seats'
+  };
 
   ngOnInit(): void {
     this.loadResources();
@@ -33,10 +48,6 @@ export class ResourceListComponent implements OnInit {
       });
   }
 
-  onEdit(resource: Resource): void {
-    this.editRequested.emit(resource);
-  }
-
   onDelete(id: number): void {
     if (confirm('Would you like to delete this workspace ?')) {
       this.resourceService.deleteResource(id).subscribe({
@@ -46,5 +57,13 @@ export class ResourceListComponent implements OnInit {
         }
       });
     }
+  }
+
+  openResourceModal(resourceToEdit?: Resource): void {
+    this.dialogService.open(ResourceFormComponent, resourceToEdit, { width: '600px' }).subscribe(saved => {
+      if (saved) {
+        this.loadResources();
+      }
+    });
   }
 }

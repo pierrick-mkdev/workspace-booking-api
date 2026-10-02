@@ -1,26 +1,37 @@
-import { Component, inject, output, signal } from '@angular/core';
+import { Component, inject, output, signal, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { ResourceService } from '../../services/resource';
 import { Resource } from '../../models/resource';
 
 type ResourceFormData = Omit<Resource, 'id'>;
 
 @Component({
-  imports: [ReactiveFormsModule],
   selector: 'app-resource-form',
   standalone: true,
-  styleUrl: './resource-form.scss',
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule
+  ],
   templateUrl: './resource-form.html',
+  styleUrl: './resource-form.scss',
 })
-export class ResourceFormComponent {
+export class ResourceFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private resourceService = inject(ResourceService);
+  private dialogRef = inject(MatDialogRef<ResourceFormComponent>);
 
-  // Event to refresh HTML with the new resource created
-  resourceSaved = output<void>();
-
-  // Retains the id if in edit mode (null if in creation mode)
-  editingId = signal<number | null>(null);
+  public resourceToEdit = inject<Resource | null>(MAT_DIALOG_DATA, { optional: true });
 
   // Form configuration with its validation rules
   resourceForm = this.fb.group({
@@ -28,47 +39,40 @@ export class ResourceFormComponent {
     capacity: [1, [Validators.required, Validators.min(1)]]
   });
 
-  setFormForEdit(resource: Resource): void {
-    this.editingId.set(resource.id);
-    this.resourceForm.patchValue({
-      name: resource.name,
-      capacity: resource.capacity
-    });
-  }
-
-  resetForm(): void {
-    this.editingId.set(null);
-    this.resourceForm.reset({ capacity: 1 });
+  ngOnInit(): void {
+    if (this.resourceToEdit) {
+      this.resourceForm.patchValue({
+        name: this.resourceToEdit.name,
+        capacity: this.resourceToEdit.capacity
+      });
+    }
   }
 
   onSubmit(): void {
     if (this.resourceForm.valid) {
       const resourceData = this.resourceForm.getRawValue() as ResourceFormData;
-      const currentId = this.editingId();
 
-      if (currentId !== null) {
-        this.editResource(currentId, resourceData);
+      if (this.resourceToEdit) {
+        this.editResource(this.resourceToEdit.id, resourceData);
       } else {
         this.createResource(resourceData);
       }
     }
   }
 
+  onCancel(): void {
+    this.dialogRef.close(false);
+  }
+
   createResource(resourceData: ResourceFormData): void {
     this.resourceService.createResource(resourceData).subscribe({
-      next: () => {
-        this.resetForm();
-        this.resourceSaved.emit(); // Success notification
-      }
+      next: () => this.dialogRef.close(true)
     });
   }
 
   editResource(id: number, resourceData: ResourceFormData): void {
     this.resourceService.updateResource(id, resourceData).subscribe({
-      next: () => {
-        this.resetForm();
-        this.resourceSaved.emit();
-      }
+      next: () => this.dialogRef.close(true)
     });
   }
 }

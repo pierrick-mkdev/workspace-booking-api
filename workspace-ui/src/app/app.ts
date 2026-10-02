@@ -1,18 +1,19 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, viewChild } from '@angular/core';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatIconModule } from '@angular/material/icon';
 import { ResourceListComponent } from './components/resource-list/resource-list';
-import { ResourceFormComponent } from './components/resource-form/resource-form';
-import { ReservationFormComponent } from './components/reservation-form/reservation-form';
 import { ReservationListComponent } from './components/reservation-list/reservation-list';
 import { ErrorBannerComponent } from './components/error-banner/error-banner';
-import { Resource } from './models/resource';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
+    MatToolbarModule,
+    MatTabsModule,
+    MatIconModule,
     ResourceListComponent,
-    ResourceFormComponent,
-    ReservationFormComponent,
     ReservationListComponent,
     ErrorBannerComponent
   ],
@@ -21,20 +22,14 @@ import { Resource } from './models/resource';
 })
 export class App {
   title = 'workspace-ui';
+  readonly resourceList = viewChild(ResourceListComponent);
+  readonly reservationList = viewChild(ReservationListComponent);
 
-  @ViewChild(ResourceFormComponent) resourceForm!: ResourceFormComponent;
-  @ViewChild(ResourceListComponent) resourceList!: ResourceListComponent;
-  @ViewChild(ReservationListComponent) reservationList!: ReservationListComponent;
-
-  onResourceSaved(): void {
-    this.resourceList?.loadResources();
-  }
-
-  onEditRequested(resource: Resource): void {
-    this.resourceForm?.setFormForEdit(resource);
-  }
-
-  onReservationSaved(): void {
-    this.reservationList.loadReservations();
+  onTabChange(index: number): void {
+    if (index === 0) {
+      this.resourceList()?.loadResources();
+    } else if (index === 1) {
+      this.reservationList()?.loadReservations();
+    }
   }
 }

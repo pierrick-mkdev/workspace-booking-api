@@ -1,5 +1,14 @@
-import { Component, inject, OnInit, output, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { Resource } from '../../models/resource';
 import { ResourceService } from '../../services/resource';
 import { ReservationService } from '../../services/reservation';
@@ -7,7 +16,18 @@ import { ReservationService } from '../../services/reservation';
 @Component({
   selector: 'app-reservation-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  providers: [provideNativeDateAdapter()],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDatepickerModule
+  ],
   templateUrl: './reservation-form.html',
   styleUrl: './reservation-form.scss'
 })
@@ -15,9 +35,7 @@ export class ReservationFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private resourceService = inject(ResourceService);
   private reservationService = inject(ReservationService);
-
-  // Event emitted to parent component after successful creation
-  reservationSaved = output<void>();
+  private dialogRef = inject(MatDialogRef<ReservationFormComponent>);
 
   // List of available resources for the dropdown select
   resources = signal<Resource[]>([]);
@@ -25,8 +43,10 @@ export class ReservationFormComponent implements OnInit {
   reservationForm = this.fb.group({
     resourceId: [null as number | null, [Validators.required]],
     userEmail: ['', [Validators.required, Validators.email]],
-    startTime: ['', [Validators.required]],
-    endTime: ['', [Validators.required]]
+    startDate: [null as Date | null, [Validators.required]],
+    startTime: ['09:00', [Validators.required]],
+    endDate: [null as Date | null, [Validators.required]],
+    endTime: ['18:00', [Validators.required]]
   });
 
   ngOnInit(): void {
@@ -39,21 +59,31 @@ export class ReservationFormComponent implements OnInit {
     });
   }
 
+  private combineDateAndTime(date: Date, timeStr: string): Date {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    const result = new Date(date);
+    result.setHours(hours, minutes, 0, 0);
+    return result;
+  }
+
   onSubmit(): void {
     if (this.reservationForm.invalid) return;
 
-    const rawValue = this.reservationForm.getRawValue();
+    const raw = this.reservationForm.getRawValue();
+    const start = this.combineDateAndTime(raw.startDate!, raw.startTime!);
+    const end = this.combineDateAndTime(raw.endDate!, raw.endTime!);
 
     this.reservationService.createReservation({
-      resourceId: Number(rawValue.resourceId),
-      userEmail: rawValue.userEmail!,
-      startTime: new Date(rawValue.startTime!).toISOString(),
-      endTime: new Date(rawValue.endTime!).toISOString()
+      resourceId: Number(raw.resourceId),
+      userEmail: raw.userEmail!,
+      startTime: start.toISOString(),
+      endTime: end.toISOString()
     }).subscribe({
-      next: () => {
-        this.reservationForm.reset();
-        this.reservationSaved.emit();
-      }
+      next: () => this.dialogRef.close(true)
     });
+  }
+
+  onCancel(): void {
+    this.dialogRef.close(false);
   }
 }

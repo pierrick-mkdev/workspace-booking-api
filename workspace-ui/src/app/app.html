@@ -1,14 +1,26 @@
+<mat-toolbar color="primary" class="app-header">
+  <mat-icon class="header-icon">meeting_room</mat-icon>
+  <span>Workspace Management</span>
+</mat-toolbar>
+
 <app-error-banner></app-error-banner>
 
-<h1>Workspace Management</h1>
+<main class="main-container">
+  <mat-tab-group (selectedIndexChange)="onTabChange($event)" animationDuration="200ms" dynamicHeight>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">grid_view</mat-icon>
+        Workspaces
+      </ng-template>
+        <app-resource-list></app-resource-list>
+    </mat-tab>
 
-<hr>
-<app-resource-form (resourceSaved)="onResourceSaved()"></app-resource-form>
-<hr>
-<app-resource-list (editRequested)="onEditRequested($event)"></app-resource-list>
-
-<hr>
-<h2>Reservations</h2>
-<app-reservation-form (reservationSaved)="onReservationSaved()"></app-reservation-form>
-<hr>
-<app-reservation-list></app-reservation-list>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">event</mat-icon>
+        Reservations
+      </ng-template>
+        <app-reservation-list></app-reservation-list>
+    </mat-tab>
+  </mat-tab-group>
+</main>
