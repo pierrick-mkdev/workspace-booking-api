@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { finalize } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
@@ -12,6 +12,8 @@ import { DialogService } from '../../services/dialog';
 import { ReservationFormComponent } from '../reservation-form/reservation-form';
 import { NotificationService } from '../../services/notification';
 import { LoadingSpinner } from '../loading-spinner/loading-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { SearchInput } from '../search-input/search-input';
 
 @Component({
   selector: 'app-reservation-list',
@@ -24,7 +26,9 @@ import { LoadingSpinner } from '../loading-spinner/loading-spinner';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    LoadingSpinner
+    MatTooltipModule,
+    LoadingSpinner,
+    SearchInput
   ],
   templateUrl: './reservation-list.html',
   styleUrl: './reservation-list.scss'
@@ -36,6 +40,17 @@ export class ReservationListComponent implements OnInit {
 
   reservations = signal<Reservation[]>([]);
   loading = signal<boolean>(true);
+  searchQuery = signal<string>('');
+
+  filteredReservations = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    if (!query) return this.reservations();
+
+    return this.reservations().filter(res =>
+      res.userEmail.toLowerCase().includes(query) ||
+      (res.resourceName && res.resourceName.toLowerCase().includes(query))
+    );
+  });
 
   displayedColumns: string[] = ['resourceName', 'userEmail', 'startTime', 'endTime', 'actions'];
 

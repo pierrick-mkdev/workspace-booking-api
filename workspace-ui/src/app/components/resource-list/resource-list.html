@@ -1,5 +1,11 @@
 <div class="list-container">
   <div class="list-header">
+    <app-search-input
+      [(value)]="searchQuery"
+      label="Search workspace name..."
+      placeholder="e.g. Room Alpha">
+    </app-search-input>
+
     <div class="actions">
       <button mat-flat-button color="primary" (click)="openResourceModal()">
         <mat-icon>add</mat-icon>
@@ -14,7 +20,7 @@
   <app-loading-spinner [loading]="loading()"></app-loading-spinner>
 
   @if (!loading()) {
-    @if (resources().length === 0) {
+    @if (filteredResources().length === 0) {
       <mat-card class="empty-card">
         <mat-card-content>
           <mat-icon class="empty-icon">meeting_room</mat-icon>
@@ -23,7 +29,7 @@
       </mat-card>
     } @else {
       <div class="cards-grid">
-        @for (resource of resources(); track resource.id) {
+        @for (resource of filteredResources(); track resource.id) {
           <mat-card class="resource-card">
             <mat-card-header>
               <mat-icon mat-card-avatar class="card-avatar">business</mat-icon>

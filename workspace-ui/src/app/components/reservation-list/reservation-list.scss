@@ -8,13 +8,15 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
   margin-top: 10px;
+  flex-wrap: wrap;
 
   .actions {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
   }
 }
 

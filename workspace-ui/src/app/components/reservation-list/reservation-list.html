@@ -1,5 +1,11 @@
 <div class="list-container">
   <div class="list-header">
+    <app-search-input
+      [(value)]="searchQuery"
+      label="Search by user or workspace..."
+      placeholder="e.g. user@example.com">
+    </app-search-input>
+
     <div class="actions">
       <button mat-flat-button color="primary" (click)="openReservationModal()">
         <mat-icon>add</mat-icon>
@@ -14,7 +20,7 @@
   <app-loading-spinner [loading]="loading()"></app-loading-spinner>
 
   @if (!loading()) {
-    @if (reservations().length === 0) {
+    @if (filteredReservations().length === 0) {
     <mat-card class="empty-card">
       <mat-card-content>
         <mat-icon class="empty-icon">event_busy</mat-icon>
@@ -23,7 +29,7 @@
     </mat-card>
     } @else {
     <div class="table-responsive mat-elevation-z2">
-      <table mat-table [dataSource]="reservations()" class="desktop-table">
+      <table mat-table [dataSource]="filteredReservations()" class="desktop-table">
 
         <ng-container matColumnDef="resourceName">
           <th mat-header-cell *matHeaderCellDef>Workspace</th>
@@ -75,7 +81,7 @@
     </div>
 
     <div class="mobile-cards">
-      @for (res of reservations(); track res.id) {
+      @for (res of filteredReservations(); track res.id) {
         <mat-card class="reservation-card">
           <mat-card-content>
             <div class="card-header">

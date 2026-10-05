@@ -1,6 +1,6 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {delay, finalize } from 'rxjs';
+import { finalize } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,6 +11,8 @@ import { DialogService } from '../../services/dialog';
 import { ResourceFormComponent } from '../resource-form/resource-form';
 import { NotificationService } from '../../services/notification';
 import { LoadingSpinner } from '../loading-spinner/loading-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { SearchInput } from '../search-input/search-input';
 
 @Component({
   selector: 'app-resource-list',
@@ -21,7 +23,9 @@ import { LoadingSpinner } from '../loading-spinner/loading-spinner';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    LoadingSpinner
+    MatTooltipModule,
+    LoadingSpinner,
+    SearchInput
   ],
   templateUrl: './resource-list.html',
   styleUrl: './resource-list.scss'
@@ -34,6 +38,16 @@ export class ResourceListComponent implements OnInit {
 
   resources = signal<Resource[]>([]);
   loading = signal<boolean>(true);
+  searchQuery = signal<string>('');
+  filteredResources = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    if (!query) return this.resources();
+
+    return this.resources().filter(res =>
+      res.name.toLowerCase().includes(query)
+    );
+  });
+
   readonly seatMapping: { [k: string]: string } = {
     '=1': '1 seat',
     'other': '# seats'
