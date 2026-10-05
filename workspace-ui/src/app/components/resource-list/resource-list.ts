@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { finalize } from 'rxjs';
+import {delay, finalize } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,6 +9,8 @@ import { ResourceService } from '../../services/resource';
 import { Resource } from '../../models/resource';
 import { DialogService } from '../../services/dialog';
 import { ResourceFormComponent } from '../resource-form/resource-form';
+import { NotificationService } from '../../services/notification';
+import { LoadingSpinner } from '../loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-resource-list',
@@ -18,7 +20,8 @@ import { ResourceFormComponent } from '../resource-form/resource-form';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    LoadingSpinner
   ],
   templateUrl: './resource-list.html',
   styleUrl: './resource-list.scss'
@@ -27,6 +30,7 @@ import { ResourceFormComponent } from '../resource-form/resource-form';
 export class ResourceListComponent implements OnInit {
   private resourceService = inject(ResourceService);
   private dialogService = inject(DialogService);
+  private notificationService = inject(NotificationService);
 
   resources = signal<Resource[]>([]);
   loading = signal<boolean>(true);
@@ -52,7 +56,7 @@ export class ResourceListComponent implements OnInit {
     if (confirm('Would you like to delete this workspace ?')) {
       this.resourceService.deleteResource(id).subscribe({
         next: () => {
-          // Refresh the resource list after deletion
+          this.notificationService.showSuccess('Workspace deleted successfully!');
           this.loadResources();
         }
       });

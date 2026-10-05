@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ResourceService } from '../../services/resource';
 import { Resource } from '../../models/resource';
+import { NotificationService } from '../../services/notification';
 
 type ResourceFormData = Omit<Resource, 'id'>;
 
@@ -30,6 +31,7 @@ export class ResourceFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private resourceService = inject(ResourceService);
   private dialogRef = inject(MatDialogRef<ResourceFormComponent>);
+  private notificationService = inject(NotificationService);
 
   public resourceToEdit = inject<Resource | null>(MAT_DIALOG_DATA, { optional: true });
 
@@ -66,13 +68,19 @@ export class ResourceFormComponent implements OnInit {
 
   createResource(resourceData: ResourceFormData): void {
     this.resourceService.createResource(resourceData).subscribe({
-      next: () => this.dialogRef.close(true)
+      next: () => {
+        this.notificationService.showSuccess('Workspace created successfully!');
+        this.dialogRef.close(true);
+      }
     });
   }
 
   editResource(id: number, resourceData: ResourceFormData): void {
     this.resourceService.updateResource(id, resourceData).subscribe({
-      next: () => this.dialogRef.close(true)
+      next: () => {
+        this.notificationService.showSuccess('Workspace modified successfully!');
+        this.dialogRef.close(true)
+      }
     });
   }
 }

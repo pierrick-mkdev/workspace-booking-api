@@ -11,44 +11,44 @@
     </div>
   </div>
 
-  @if (loading()) {
-    <div class="spinner-container">
-      <mat-spinner diameter="40"></mat-spinner>
-    </div>
-  } @else if (resources().length === 0) {
-    <mat-card class="empty-card">
-      <mat-card-content>
-        <mat-icon class="empty-icon">meeting_room</mat-icon>
-        <p>No workspaces found. Create your first workspace using the form!</p>
-      </mat-card-content>
-    </mat-card>
-  } @else {
-    <div class="cards-grid">
-      @for (resource of resources(); track resource.id) {
-        <mat-card class="resource-card">
-          <mat-card-header>
-            <mat-icon mat-card-avatar class="card-avatar">business</mat-icon>
-            <mat-card-title>{{ resource.name }}</mat-card-title>
-            <mat-card-subtitle>
-              <span class="capacity-badge">
-                <mat-icon class="badge-icon">groups</mat-icon>
-                {{ resource.capacity | i18nPlural: seatMapping }}
-              </span>
-            </mat-card-subtitle>
-          </mat-card-header>
+  <app-loading-spinner [loading]="loading()"></app-loading-spinner>
 
-          <mat-card-actions align="end">
-            <button mat-button color="primary" (click)="openResourceModal(resource)">
-              <mat-icon>edit</mat-icon>
-              Edit
-            </button>
-            <button mat-button color="warn" (click)="onDelete(resource.id)">
-              <mat-icon>delete</mat-icon>
-              Delete
-            </button>
-          </mat-card-actions>
-        </mat-card>
-      }
-    </div>
+  @if (!loading()) {
+    @if (resources().length === 0) {
+      <mat-card class="empty-card">
+        <mat-card-content>
+          <mat-icon class="empty-icon">meeting_room</mat-icon>
+          <p>No workspaces found. Create your first workspace using the form!</p>
+        </mat-card-content>
+      </mat-card>
+    } @else {
+      <div class="cards-grid">
+        @for (resource of resources(); track resource.id) {
+          <mat-card class="resource-card">
+            <mat-card-header>
+              <mat-icon mat-card-avatar class="card-avatar">business</mat-icon>
+              <mat-card-title>{{ resource.name }}</mat-card-title>
+              <mat-card-subtitle>
+                <span class="capacity-badge">
+                  <mat-icon class="badge-icon">groups</mat-icon>
+                  {{ resource.capacity | i18nPlural: seatMapping }}
+                </span>
+              </mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-actions align="end">
+              <button mat-button color="primary" (click)="openResourceModal(resource)">
+                <mat-icon>edit</mat-icon>
+                Edit
+              </button>
+              <button mat-button color="warn" (click)="onDelete(resource.id)">
+                <mat-icon>delete</mat-icon>
+                Delete
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        }
+      </div>
+    }
   }
 </div>

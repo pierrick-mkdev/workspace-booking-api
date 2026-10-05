@@ -1,16 +1,14 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NavigationStart, Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ErrorService {
   private router = inject(Router);
-  private errorMessageSignal = signal<string | null>(null);
-  private timeoutId?: ReturnType<typeof setTimeout>;
-
-  readonly message = this.errorMessageSignal.asReadonly();
+  private snackBar = inject(MatSnackBar);
 
   constructor() {
     this.router.events.subscribe((event) => {
@@ -38,18 +36,15 @@ export class ErrorService {
       }
     }
 
-    this.errorMessageSignal.set(messageToDisplay);
-
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
-    }
-    this.timeoutId = setTimeout(() => this.clear(), 5000);
+    this.snackBar.open(messageToDisplay, 'Close', {
+      duration: 5000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+      panelClass: ['error-snackbar']
+    });
   }
 
   clear(): void {
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
-    }
-    this.errorMessageSignal.set(null);
+    this.snackBar.dismiss();
   }
 }

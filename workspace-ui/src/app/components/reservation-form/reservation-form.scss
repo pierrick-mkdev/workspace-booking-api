@@ -35,3 +35,22 @@
     flex: 1;
   }
 }
+
+.form-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ba1a1a;
+  background-color: #ffdad6;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  margin-bottom: 12px;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}

@@ -69,6 +69,13 @@
         }
       </mat-form-field>
     </div>
+
+    @if (reservationForm.hasError('invalidRange') && (reservationForm.touched || reservationForm.dirty)) {
+      <div class="form-error">
+        <mat-icon>error_outline</mat-icon>
+        <span>End time must be strictly after start time.</span>
+      </div>
+    }
   </form>
 </mat-dialog-content>
 

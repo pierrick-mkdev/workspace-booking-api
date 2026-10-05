@@ -10,6 +10,8 @@ import { Reservation } from '../../models/reservation';
 import { ReservationService } from '../../services/reservation';
 import { DialogService } from '../../services/dialog';
 import { ReservationFormComponent } from '../reservation-form/reservation-form';
+import { NotificationService } from '../../services/notification';
+import { LoadingSpinner } from '../loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-reservation-list',
@@ -21,7 +23,8 @@ import { ReservationFormComponent } from '../reservation-form/reservation-form';
     MatTableModule,
     MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    LoadingSpinner
   ],
   templateUrl: './reservation-list.html',
   styleUrl: './reservation-list.scss'
@@ -29,6 +32,7 @@ import { ReservationFormComponent } from '../reservation-form/reservation-form';
 export class ReservationListComponent implements OnInit {
   private reservationService = inject(ReservationService);
   private dialogService = inject(DialogService);
+  private notificationService = inject(NotificationService);
 
   reservations = signal<Reservation[]>([]);
   loading = signal<boolean>(true);
@@ -58,7 +62,10 @@ export class ReservationListComponent implements OnInit {
   onCancel(id: number): void {
     if (confirm('Are you sure you want to cancel this reservation?')) {
       this.reservationService.cancelReservation(id).subscribe({
-        next: () => this.loadReservations()
+        next: () => {
+          this.notificationService.showSuccess('Reservation canceled successfully!');
+          this.loadReservations()
+        }
       });
     }
   }

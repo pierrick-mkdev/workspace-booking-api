@@ -11,38 +11,37 @@
     </div>
   </div>
 
-  @if (loading()) {
-    <div class="spinner-container">
-      <mat-spinner diameter="40"></mat-spinner>
-    </div>
-  } @else if (reservations().length === 0) {
+  <app-loading-spinner [loading]="loading()"></app-loading-spinner>
+
+  @if (!loading()) {
+    @if (reservations().length === 0) {
     <mat-card class="empty-card">
       <mat-card-content>
         <mat-icon class="empty-icon">event_busy</mat-icon>
         <p>No active reservations found. Book a workspace above!</p>
       </mat-card-content>
     </mat-card>
-  } @else {
+    } @else {
     <div class="table-responsive mat-elevation-z2">
       <table mat-table [dataSource]="reservations()" class="desktop-table">
 
         <ng-container matColumnDef="resourceName">
           <th mat-header-cell *matHeaderCellDef>Workspace</th>
           <td mat-cell *matCellDef="let element">
-            <span class="workspace-name">
-              <mat-icon class="cell-icon">business</mat-icon>
-              {{ element.resourceName || 'Workspace #' + element.resourceId }}
-            </span>
+          <span class="workspace-name">
+            <mat-icon class="cell-icon">business</mat-icon>
+            {{ element.resourceName || 'Workspace #' + element.resourceId }}
+          </span>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="userEmail">
           <th mat-header-cell *matHeaderCellDef>User</th>
           <td mat-cell *matCellDef="let element">
-            <span class="user-email">
-              <mat-icon class="cell-icon">email</mat-icon>
-              {{ element.userEmail }}
-            </span>
+          <span class="user-email">
+            <mat-icon class="cell-icon">email</mat-icon>
+            {{ element.userEmail }}
+          </span>
           </td>
         </ng-container>
 
@@ -91,5 +90,6 @@
         </mat-card>
       }
     </div>
+    }
   }
 </div>
