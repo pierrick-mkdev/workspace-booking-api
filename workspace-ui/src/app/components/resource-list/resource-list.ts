@@ -13,6 +13,7 @@ import { NotificationService } from '../../services/notification';
 import { LoadingSpinner } from '../loading-spinner/loading-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SearchInput } from '../search-input/search-input';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-resource-list',
@@ -35,7 +36,7 @@ export class ResourceListComponent implements OnInit {
   private resourceService = inject(ResourceService);
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
-
+  authService = inject(AuthService);
   resources = signal<Resource[]>([]);
   loading = signal<boolean>(true);
   searchQuery = signal<string>('');

@@ -7,10 +7,13 @@
     </app-search-input>
 
     <div class="actions">
-      <button mat-flat-button color="primary" (click)="openResourceModal()">
-        <mat-icon>add</mat-icon>
-        Add Workspace
-      </button>
+      @if (authService.isAdmin())
+      {
+        <button mat-flat-button color="primary" (click)="openResourceModal()">
+          <mat-icon>add</mat-icon>
+          Add Workspace
+        </button>
+      }
       <button mat-icon-button (click)="loadResources()" matTooltip="Refresh">
         <mat-icon>refresh</mat-icon>
       </button>
@@ -42,16 +45,19 @@
               </mat-card-subtitle>
             </mat-card-header>
 
-            <mat-card-actions align="end">
-              <button mat-button color="primary" (click)="openResourceModal(resource)">
-                <mat-icon>edit</mat-icon>
-                Edit
-              </button>
-              <button mat-button color="warn" (click)="onDelete(resource.id)">
-                <mat-icon>delete</mat-icon>
-                Delete
-              </button>
-            </mat-card-actions>
+            @if (authService.isAdmin())
+            {
+              <mat-card-actions align="end">
+                <button mat-button color="primary" (click)="openResourceModal(resource)">
+                  <mat-icon>edit</mat-icon>
+                  Edit
+                </button>
+                <button mat-button color="warn" (click)="onDelete(resource.id)">
+                  <mat-icon>delete</mat-icon>
+                  Delete
+                </button>
+              </mat-card-actions>
+            }
           </mat-card>
         }
       </div>

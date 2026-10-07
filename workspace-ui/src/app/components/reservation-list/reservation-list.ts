@@ -14,6 +14,7 @@ import { NotificationService } from '../../services/notification';
 import { LoadingSpinner } from '../loading-spinner/loading-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SearchInput } from '../search-input/search-input';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-reservation-list',
@@ -37,7 +38,7 @@ export class ReservationListComponent implements OnInit {
   private reservationService = inject(ReservationService);
   private dialogService = inject(DialogService);
   private notificationService = inject(NotificationService);
-
+  authService = inject(AuthService);
   reservations = signal<Reservation[]>([]);
   loading = signal<boolean>(true);
   searchQuery = signal<string>('');
@@ -52,7 +53,12 @@ export class ReservationListComponent implements OnInit {
     );
   });
 
-  displayedColumns: string[] = ['resourceName', 'userEmail', 'startTime', 'endTime', 'actions'];
+  private baseColumns = ['resourceName', 'userEmail', 'startTime', 'endTime'];
+  public displayedColumns = computed(() => {
+    return this.authService.isAdmin()
+      ? [...this.baseColumns, 'actions']
+      : this.baseColumns;
+  });
 
   ngOnInit(): void {
     this.loadReservations();

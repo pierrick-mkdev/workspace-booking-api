@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkSpace.Api.Data;
@@ -10,6 +11,7 @@ namespace WorkSpace.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class ResourcesController : ControllerBase
 {
     private readonly IResourceService _resourceService;
@@ -47,6 +49,7 @@ public class ResourcesController : ControllerBase
     
     // POST: api/resources
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<Resource>> CreateResource(CreateResourceDto createDto)
     {
         var validationResult = await _validator.ValidateAsync(createDto);
@@ -62,6 +65,7 @@ public class ResourcesController : ControllerBase
     
     // PUT: api/resources/1
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateResource(int id, ResourceDto updateDto)
     {
         if (id != updateDto.Id)
@@ -78,6 +82,7 @@ public class ResourcesController : ControllerBase
     
     // DELETE: api/resources/1
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteResource(int id)
     {
         bool deleted = await _resourceService.DeleteAsync(id);
