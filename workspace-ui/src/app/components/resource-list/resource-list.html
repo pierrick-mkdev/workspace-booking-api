@@ -34,6 +34,11 @@
       <div class="cards-grid">
         @for (resource of filteredResources(); track resource.id) {
           <mat-card class="resource-card">
+
+            @if (resource.imageUrl) {
+              <img mat-card-image [src]="getImageUrl(resource.imageUrl)" alt="{{ resource.name }}" style="height: 160px; object-fit: cover;" />
+            }
+
             <mat-card-header>
               <mat-icon mat-card-avatar class="card-avatar">business</mat-icon>
               <mat-card-title>{{ resource.name }}</mat-card-title>

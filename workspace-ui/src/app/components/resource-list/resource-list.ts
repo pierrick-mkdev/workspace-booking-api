@@ -14,6 +14,7 @@ import { LoadingSpinner } from '../loading-spinner/loading-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SearchInput } from '../search-input/search-input';
 import { AuthService } from '../../services/auth';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-resource-list',
@@ -56,6 +57,14 @@ export class ResourceListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadResources();
+  }
+
+  getImageUrl(imageUrl?: string): string {
+    if (!imageUrl) return '';
+    if (imageUrl.startsWith('http')) return imageUrl;
+
+    const baseHost = environment.apiUrl.replace(/\/api$/, '');
+    return `${baseHost}${imageUrl}`;
   }
 
   loadResources(): void {

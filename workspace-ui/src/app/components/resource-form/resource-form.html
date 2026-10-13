@@ -26,6 +26,29 @@
         <mat-error>Capacity must be at least 1</mat-error>
       }
     </mat-form-field>
+
+    <div class="file-upload-container" style="margin-top: 10px;">
+      <button mat-stroked-button type="button" (click)="fileInput.click()">
+        <mat-icon>attach_file</mat-icon> Choose Image
+      </button>
+      <span style="margin-left: 10px; font-size: 14px; color: gray;">
+        {{ fileName || 'No file chosen' }}
+      </span>
+      <input
+        type="file"
+        #fileInput
+        (change)="onFileSelected($event)"
+        accept="image/*"
+        style="display: none;"
+      />
+    </div>
+
+    @if (imagePreview()) {
+      <div class="preview-container" style="margin-top: 15px;">
+        <p style="font-size: 12px; color: gray; margin-bottom: 5px;">Preview:</p>
+        <img [src]="imagePreview()" alt="Image preview" style="width: 100%; max-height: 180px; object-fit: cover; border-radius: 8px;" />
+      </div>
+    }
   </form>
 </mat-dialog-content>
 

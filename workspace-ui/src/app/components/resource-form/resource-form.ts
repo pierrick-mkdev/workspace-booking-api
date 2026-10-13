@@ -35,6 +35,10 @@ export class ResourceFormComponent implements OnInit {
 
   public resourceToEdit = inject<Resource | null>(MAT_DIALOG_DATA, { optional: true });
 
+  selectedFile: File | null = null;
+  fileName: string = '';
+  imagePreview = signal<string | null>(null);
+
   // Form configuration with its validation rules
   resourceForm = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
@@ -50,14 +54,35 @@ export class ResourceFormComponent implements OnInit {
     }
   }
 
+  onFileSelected(event: any): void {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      this.fileName = file.name;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview.set(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
   onSubmit(): void {
     if (this.resourceForm.valid) {
-      const resourceData = this.resourceForm.getRawValue() as ResourceFormData;
+      const formData = new FormData();
+      formData.append('Name', this.resourceForm.get('name')?.value || '');
+      formData.append('Capacity', String(this.resourceForm.get('capacity')?.value || 1));
+
+      if (this.selectedFile) {
+        formData.append('Image', this.selectedFile, this.selectedFile.name);
+      }
 
       if (this.resourceToEdit) {
-        this.editResource(this.resourceToEdit.id, resourceData);
+        formData.append('Id', String(this.resourceToEdit.id));
+        this.editResource(this.resourceToEdit.id, formData);
       } else {
-        this.createResource(resourceData);
+        this.createResource(formData);
       }
     }
   }
@@ -66,8 +91,8 @@ export class ResourceFormComponent implements OnInit {
     this.dialogRef.close(false);
   }
 
-  createResource(resourceData: ResourceFormData): void {
-    this.resourceService.createResource(resourceData).subscribe({
+  createResource(formData: FormData): void {
+    this.resourceService.createResource(formData).subscribe({
       next: () => {
         this.notificationService.showSuccess('Workspace created successfully!');
         this.dialogRef.close(true);
@@ -75,8 +100,8 @@ export class ResourceFormComponent implements OnInit {
     });
   }
 
-  editResource(id: number, resourceData: ResourceFormData): void {
-    this.resourceService.updateResource(id, resourceData).subscribe({
+  editResource(id: number, formData: FormData): void {
+    this.resourceService.updateResource(id, formData).subscribe({
       next: () => {
         this.notificationService.showSuccess('Workspace modified successfully!');
         this.dialogRef.close(true)

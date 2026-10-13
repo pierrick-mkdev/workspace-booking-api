@@ -22,6 +22,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddScoped<IResourceService, ResourceService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 
+// Register file storage service
+builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+
 // Register validators
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
@@ -78,6 +81,7 @@ app.MapScalarApiReference();
 app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseStaticFiles();
 app.MapControllers();
 
 // Apply EF Core migrations automatically on startup

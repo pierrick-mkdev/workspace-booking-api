@@ -27,7 +27,7 @@ public class ResourcesController : ControllerBase
 
     // GET: api/resources
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Resource>>> GetResources()
+    public async Task<ActionResult<IEnumerable<ResourceDto>>> GetResources()
     {
         IEnumerable<ResourceDto> resources = await _resourceService.GetAllAsync();
         return Ok(resources);
@@ -35,7 +35,7 @@ public class ResourcesController : ControllerBase
 
     // GET: api/resources/1
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<Resource>> GetResource(int id)
+    public async Task<ActionResult<ResourceDto>> GetResource(int id)
     {
         ResourceDto? resource = await _resourceService.GetByIdAsync(id);
         
@@ -50,7 +50,7 @@ public class ResourcesController : ControllerBase
     // POST: api/resources
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<Resource>> CreateResource(CreateResourceDto createDto)
+    public async Task<ActionResult<ResourceDto>> CreateResource([FromForm] CreateResourceDto createDto)
     {
         var validationResult = await _validator.ValidateAsync(createDto);
 
@@ -66,7 +66,7 @@ public class ResourcesController : ControllerBase
     // PUT: api/resources/1
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> UpdateResource(int id, ResourceDto updateDto)
+    public async Task<IActionResult> UpdateResource(int id, [FromForm] UpdateResourceDto updateDto)
     {
         if (id != updateDto.Id)
         {

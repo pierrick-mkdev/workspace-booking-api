@@ -8,10 +8,12 @@ namespace WorkSpace.Api.Services;
 public class ResourceService : IResourceService
 {
     private readonly AppDbContext _context;
+    private readonly IFileStorageService _fileStorageService;
     
-    public ResourceService(AppDbContext context)
+    public ResourceService(AppDbContext context, IFileStorageService fileStorageService)
     {
         _context = context;
+        _fileStorageService = fileStorageService;
     }
 
     public async Task<IEnumerable<ResourceDto>> GetAllAsync()
@@ -21,7 +23,8 @@ public class ResourceService : IResourceService
             {
                 Id = r.Id,
                 Name = r.Name,
-                Capacity = r.Capacity
+                Capacity = r.Capacity,
+                ImageUrl = r.ImageUrl
             })
             .ToListAsync();
     }
@@ -36,16 +39,25 @@ public class ResourceService : IResourceService
         {
             Id = resource.Id,
             Name = resource.Name,
-            Capacity = resource.Capacity
+            Capacity = resource.Capacity,
+            ImageUrl = resource.ImageUrl
         };
     }
 
     public async Task<ResourceDto> CreateAsync(CreateResourceDto createDto)
     {
+        string? imageUrl = null;
+        
+        if (createDto.Image != null)
+        {
+            imageUrl = await _fileStorageService.UploadFileAsync(createDto.Image);
+        }
+        
         var resource = new Resource
         {
             Name = createDto.Name,
-            Capacity = createDto.Capacity
+            Capacity = createDto.Capacity,
+            ImageUrl = imageUrl
         };
 
         _context.Resources.Add(resource);
@@ -55,11 +67,12 @@ public class ResourceService : IResourceService
         {
             Id = resource.Id,
             Name = resource.Name,
-            Capacity = resource.Capacity
+            Capacity = resource.Capacity,
+            ImageUrl = resource.ImageUrl
         };
     }
 
-    public async Task<bool> UpdateAsync(int id, ResourceDto updateDto)
+    public async Task<bool> UpdateAsync(int id, UpdateResourceDto updateDto)
     {
         var resource = await _context.Resources.FindAsync(id);
         
@@ -67,6 +80,18 @@ public class ResourceService : IResourceService
 
         resource.Name = updateDto.Name;
         resource.Capacity = updateDto.Capacity;
+        
+        if (updateDto.Image != null && updateDto.Image.Length > 0)
+        {
+            //Delete old image
+            if (!string.IsNullOrEmpty(resource.ImageUrl))
+            {
+                await _fileStorageService.DeleteFileAsync(resource.ImageUrl);
+            }
+
+            //Upload new image
+            resource.ImageUrl = await _fileStorageService.UploadFileAsync(updateDto.Image);
+        }
 
         await _context.SaveChangesAsync();
         return true;
@@ -77,6 +102,11 @@ public class ResourceService : IResourceService
         var resource = await _context.Resources.FindAsync(id);
         
         if (resource == null) return false;
+
+        if (!string.IsNullOrEmpty(resource.ImageUrl))
+        {
+            await _fileStorageService.DeleteFileAsync(resource.ImageUrl);
+        }
 
         _context.Resources.Remove(resource);
         await _context.SaveChangesAsync();
