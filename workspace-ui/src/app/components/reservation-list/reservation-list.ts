@@ -15,6 +15,7 @@ import { LoadingSpinner } from '../loading-spinner/loading-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SearchInput } from '../search-input/search-input';
 import { AuthService } from '../../services/auth';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-reservation-list',
@@ -42,6 +43,7 @@ export class ReservationListComponent implements OnInit {
   reservations = signal<Reservation[]>([]);
   loading = signal<boolean>(true);
   searchQuery = signal<string>('');
+  apiUrl = environment.apiUrl.replace('/api', '');
 
   filteredReservations = computed(() => {
     const query = this.searchQuery().toLowerCase().trim();

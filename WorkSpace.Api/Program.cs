@@ -23,7 +23,17 @@ builder.Services.AddScoped<IResourceService, ResourceService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 
 // Register file storage service
-builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+var azureStorageConnectionString = builder.Configuration.GetConnectionString("AzureStorage");
+
+// Check for the connection string and use Azure Blob file storage, otherwise use local storage
+if (!string.IsNullOrEmpty(azureStorageConnectionString))
+{
+    builder.Services.AddScoped<IFileStorageService, AzureBlobFileStorageService>();
+}
+else
+{
+    builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+}
 
 // Register validators
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
