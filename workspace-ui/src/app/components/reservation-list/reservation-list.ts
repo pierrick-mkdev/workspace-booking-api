@@ -62,6 +62,14 @@ export class ReservationListComponent implements OnInit {
       : this.baseColumns;
   });
 
+  public getImageUrl(imageUrl: string): string {
+    if (!imageUrl) return '';
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
+    }
+    return `${this.apiUrl}/${imageUrl}`;
+  }
+
   ngOnInit(): void {
     this.loadReservations();
   }
