@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorkSpace.Api.Data;
@@ -10,6 +11,7 @@ namespace WorkSpace.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class ResourcesController : ControllerBase
 {
     private readonly IResourceService _resourceService;
@@ -25,7 +27,7 @@ public class ResourcesController : ControllerBase
 
     // GET: api/resources
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Resource>>> GetResources()
+    public async Task<ActionResult<IEnumerable<ResourceDto>>> GetResources()
     {
         IEnumerable<ResourceDto> resources = await _resourceService.GetAllAsync();
         return Ok(resources);
@@ -33,7 +35,7 @@ public class ResourcesController : ControllerBase
 
     // GET: api/resources/1
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<Resource>> GetResource(int id)
+    public async Task<ActionResult<ResourceDto>> GetResource(int id)
     {
         ResourceDto? resource = await _resourceService.GetByIdAsync(id);
         
@@ -47,7 +49,8 @@ public class ResourcesController : ControllerBase
     
     // POST: api/resources
     [HttpPost]
-    public async Task<ActionResult<Resource>> CreateResource(CreateResourceDto createDto)
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<ResourceDto>> CreateResource([FromForm] CreateResourceDto createDto)
     {
         var validationResult = await _validator.ValidateAsync(createDto);
 
@@ -62,7 +65,8 @@ public class ResourcesController : ControllerBase
     
     // PUT: api/resources/1
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateResource(int id, ResourceDto updateDto)
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> UpdateResource(int id, [FromForm] UpdateResourceDto updateDto)
     {
         if (id != updateDto.Id)
         {
@@ -78,6 +82,7 @@ public class ResourcesController : ControllerBase
     
     // DELETE: api/resources/1
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteResource(int id)
     {
         bool deleted = await _resourceService.DeleteAsync(id);

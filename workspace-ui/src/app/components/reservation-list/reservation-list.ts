@@ -1,0 +1,103 @@
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
+import { finalize } from 'rxjs';
+import { MatCardModule } from '@angular/material/card';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Reservation } from '../../models/reservation';
+import { ReservationService } from '../../services/reservation';
+import { DialogService } from '../../services/dialog';
+import { ReservationFormComponent } from '../reservation-form/reservation-form';
+import { NotificationService } from '../../services/notification';
+import { LoadingSpinner } from '../loading-spinner/loading-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { SearchInput } from '../search-input/search-input';
+import { AuthService } from '../../services/auth';
+import { environment } from '../../../environments/environment';
+
+@Component({
+  selector: 'app-reservation-list',
+  standalone: true,
+  imports: [
+    CommonModule,
+    DatePipe,
+    MatCardModule,
+    MatTableModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule,
+    LoadingSpinner,
+    SearchInput
+  ],
+  templateUrl: './reservation-list.html',
+  styleUrl: './reservation-list.scss'
+})
+export class ReservationListComponent implements OnInit {
+  private reservationService = inject(ReservationService);
+  private dialogService = inject(DialogService);
+  private notificationService = inject(NotificationService);
+  authService = inject(AuthService);
+  reservations = signal<Reservation[]>([]);
+  loading = signal<boolean>(true);
+  searchQuery = signal<string>('');
+  apiUrl = environment.apiUrl.replace('/api', '');
+
+  filteredReservations = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    if (!query) return this.reservations();
+
+    return this.reservations().filter(res =>
+      res.userEmail.toLowerCase().includes(query) ||
+      (res.resourceName && res.resourceName.toLowerCase().includes(query))
+    );
+  });
+
+  private baseColumns = ['resourceName', 'userEmail', 'startTime', 'endTime'];
+  public displayedColumns = computed(() => {
+    return this.authService.isAdmin()
+      ? [...this.baseColumns, 'actions']
+      : this.baseColumns;
+  });
+
+  ngOnInit(): void {
+    this.loadReservations();
+  }
+
+  loadReservations(): void {
+    this.loading.set(true);
+    this.reservationService.getReservations()
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+      next: (data) => {
+        const sorted = [...data].sort((a, b) => {
+          const timeA = new Date(a.startTime).getTime();
+          const timeB = new Date(b.startTime).getTime();
+          return timeA - timeB;
+        });
+        this.reservations.set(sorted);
+      }
+    });
+  }
+
+  onCancel(id: number): void {
+    if (confirm('Are you sure you want to cancel this reservation?')) {
+      this.reservationService.cancelReservation(id).subscribe({
+        next: () => {
+          this.notificationService.showSuccess('Reservation canceled successfully!');
+          this.loadReservations()
+        }
+      });
+    }
+  }
+
+  openReservationModal(): void {
+    this.dialogService.open(ReservationFormComponent).subscribe(created => {
+      if (created) {
+        this.loadReservations();
+      }
+    });
+  }
+}

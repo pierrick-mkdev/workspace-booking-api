@@ -1,0 +1,20 @@
+<div class="demo-role-switcher">
+  <span class="demo-label">Demo Mode:</span>
+  <button
+    type="button"
+    mat-stroked-button
+    [class.active-role]="authService.currentRole() === 'Admin'"
+    (click)="onRoleChange('Admin')">
+    <mat-icon>admin_panel_settings</mat-icon>
+    <span class="btn-text">Admin</span>
+  </button>
+
+  <button
+    type="button"
+    mat-stroked-button
+    [class.active-role]="authService.currentRole() === 'User'"
+    (click)="onRoleChange('User')">
+    <mat-icon>person</mat-icon>
+    <span class="btn-text">User</span>
+  </button>
+</div>

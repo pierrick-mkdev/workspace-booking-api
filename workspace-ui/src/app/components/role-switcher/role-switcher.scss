@@ -1,0 +1,62 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+}
+
+.demo-role-switcher {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(0, 0, 0, 0.05);
+  padding: 4px 8px;
+  border-radius: 20px;
+
+  .demo-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #333;
+    margin-right: 4px;
+    margin-left: 4px;
+    white-space: nowrap;
+
+    @media (max-width: 700px) {
+      display: none;
+    }
+  }
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    border-color: #ccc;
+    color: #555;
+
+    @media (max-width: 700px) {
+      min-width: 36px;
+      width: 36px;
+      height: 36px;
+      padding: 0 !important;
+      border-radius: 50%;
+
+      .btn-text {
+        display: none;
+      }
+
+      mat-icon {
+        margin: 0 !important;
+      }
+    }
+
+    &.active-role {
+      background-color: #3f51b5;
+      color: white !important;
+      border-color: #3f51b5;
+      font-weight: bold;
+
+      mat-icon {
+        color: white !important;
+      }
+    }
+  }
+}

@@ -2,11 +2,13 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using WorkSpace.Api.DTOs;
 using WorkSpace.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WorkSpace.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class ReservationsController  : ControllerBase
 {
     private readonly IReservationService _reservationService;
@@ -67,6 +69,7 @@ public class ReservationsController  : ControllerBase
 
     // DELETE: api/reservations/5
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CancelReservation(int id)
     {
         var cancelled = await _reservationService.CancelAsync(id);

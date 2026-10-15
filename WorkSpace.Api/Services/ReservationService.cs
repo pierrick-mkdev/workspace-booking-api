@@ -23,6 +23,7 @@ public class ReservationService : IReservationService
                 Id = r.Id,
                 ResourceId = r.ResourceId,
                 ResourceName = r.Resource != null ? r.Resource.Name : string.Empty,
+                ResourceImageUrl = r.Resource != null ? r.Resource.ImageUrl : null,
                 UserEmail = r.UserEmail,
                 StartTime = r.StartTime,
                 EndTime = r.EndTime
@@ -43,6 +44,7 @@ public class ReservationService : IReservationService
             Id = reservation.Id,
             ResourceId = reservation.ResourceId,
             ResourceName = reservation.Resource?.Name ?? string.Empty,
+            ResourceImageUrl = reservation.Resource?.ImageUrl,
             UserEmail = reservation.UserEmail,
             StartTime = reservation.StartTime,
             EndTime = reservation.EndTime
@@ -59,6 +61,7 @@ public class ReservationService : IReservationService
                 Id = r.Id,
                 ResourceId = r.ResourceId,
                 ResourceName = r.Resource != null ? r.Resource.Name : string.Empty,
+                ResourceImageUrl = r.Resource != null ? r.Resource.ImageUrl : null,
                 UserEmail = r.UserEmail,
                 StartTime = r.StartTime,
                 EndTime = r.EndTime
@@ -71,7 +74,7 @@ public class ReservationService : IReservationService
         // Check if the resource exist and is available
         var resource = await _context.Resources.FindAsync(createDto.ResourceId);
         
-        if (resource == null || !resource.IsAvailable)
+        if (resource == null)
         {
             throw new InvalidOperationException("The requested resource does not exist or is not available.");
         }
@@ -103,6 +106,7 @@ public class ReservationService : IReservationService
             Id = reservation.Id,
             ResourceId = reservation.ResourceId,
             ResourceName = resource.Name,
+            ResourceImageUrl = resource.ImageUrl,
             UserEmail = reservation.UserEmail,
             StartTime = reservation.StartTime,
             EndTime = reservation.EndTime
