@@ -23,6 +23,13 @@ export class AuthService {
   public isAdmin = computed(() => this.currentRole() === 'Admin');
   public isUser = computed(() => this.currentRole() === 'User');
 
+  public initializeAuth() {
+    if (!this.token()) {
+      return this.switchRole('Admin');
+    }
+    return null;
+  }
+
   public switchRole(role: 'Admin' | 'User') {
     return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/demo-token?role=${role}`, {}).pipe(
       tap((res) => {
