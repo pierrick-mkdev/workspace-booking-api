@@ -46,7 +46,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular",
-        policy => policy.WithOrigins("http://localhost:4200")
+        policy => policy.WithOrigins("http://localhost:4200", "https://victorious-smoke-0f5e1a50f.5.azurestaticapps.net")
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
